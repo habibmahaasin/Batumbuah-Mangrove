@@ -48,10 +48,7 @@ export default function ApprovalsTab() {
           email,
           total_trees,
           updated_at,
-          status (
-            id,
-            name
-          )
+          status 
         `
       )
       .eq('email', values.email)
@@ -114,7 +111,7 @@ export default function ApprovalsTab() {
                 <strong>Total Trees:</strong> {participant.total_trees}
               </p>
               <p>
-                <strong>Status:</strong> {participant.status?.name || '-'}
+                <strong>Status:</strong> {participant.status || '-'}
               </p>
             </div>
           ) : (
