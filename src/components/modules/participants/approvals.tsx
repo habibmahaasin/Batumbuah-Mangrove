@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 
 const formSchema = z.object({
-  email: z.string().email('Enter a valid email'),
+  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
 });
 
 export default function ApprovalsTab() {
@@ -35,7 +35,7 @@ export default function ApprovalsTab() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: '' },
+    defaultValues: { name: '' },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -45,13 +45,12 @@ export default function ApprovalsTab() {
         `
           id,
           name,
-          email,
           total_trees,
           updated_at,
           status 
         `
       )
-      .eq('email', values.email)
+      .eq('name', values.name)
       .single();
 
     if (error) {
@@ -68,12 +67,12 @@ export default function ApprovalsTab() {
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
           <FormField
             control={form.control}
-            name='email'
+            name='name'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder='Enter email' {...field} />
+                  <Input placeholder='Enter name' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -103,9 +102,6 @@ export default function ApprovalsTab() {
             <div className='space-y-2 mt-2'>
               <p>
                 <strong>Name:</strong> {participant.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {participant.email}
               </p>
               <p>
                 <strong>Total Trees:</strong> {participant.total_trees}

@@ -25,7 +25,6 @@ export default function ParticipantsTab() {
     resolver: zodResolver(participantsFormSchema),
     defaultValues: {
       name: '',
-      email: '',
       images: undefined,
       note: '',
       total_trees: '',
@@ -58,7 +57,6 @@ export default function ParticipantsTab() {
       .insert([
         {
           name: values.name,
-          email: values.email,
           images: imageUrl,
           note: values.note,
           total_trees: values.total_trees,
@@ -97,25 +95,6 @@ export default function ParticipantsTab() {
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input placeholder='John Doe' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Email */}
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='email'
-                        placeholder='john@example.com'
-                        {...field}
-                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

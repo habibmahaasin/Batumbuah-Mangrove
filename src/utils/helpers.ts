@@ -7,3 +7,6 @@ const ERROR_MESSAGES: Record<string, string> = {
 export const parseError = (error: any) => {
   return ERROR_MESSAGES[error.code] || error.message;
 };
+
+export const IMAGE_URL =
+  'https://lgdimdqopholrfpibips.supabase.co/storage/v1/object/public/batumbuah_mangrove/';

@@ -28,8 +28,6 @@ export default function LeaderboardTab() {
     return <div className='text-red-500'>Error loading leaderboard</div>;
   }
 
-  console.log(data);
-
   return (
     <div className='space-y-3 pb-4'>
       {data.map((participant, index) => (
@@ -56,9 +54,6 @@ export default function LeaderboardTab() {
               </Avatar>
               <div>
                 <p className='font-medium'>{participant.name || 'Anonymous'}</p>
-                <p className='text-sm text-muted-foreground'>
-                  {participant.email || '-'}
-                </p>
               </div>
             </div>
 

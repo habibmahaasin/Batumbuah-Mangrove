@@ -11,25 +11,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
-
-type Participant = {
-  id: number;
-  name: string;
-  email: string;
-  total_trees: number;
-  created_at: string;
-  status: {
-    id: number;
-    name: string;
-  } | null;
-};
+import DetailParticipant from './detail';
+import { Participant } from './type';
+import { Badge } from '@/components/ui/badge';
 
 export default function ParticipantsTable() {
   const supabase = createClient();
@@ -41,46 +25,47 @@ export default function ParticipantsTable() {
   const [selected, setSelected] = useState<Participant | null>(null);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { count } = await supabase
-        .from('participants')
-        .select('*', { count: 'exact', head: true });
+  const fetchData = async () => {
+    const { count } = await supabase
+      .from('participants')
+      .select('*', { count: 'exact', head: true });
 
-      setTotal(count || 0);
+    setTotal(count || 0);
 
-      const from = (page - 1) * perPage;
-      const to = from + perPage - 1;
+    const from = (page - 1) * perPage;
+    const to = from + perPage - 1;
 
-      const { data } = await supabase
-        .from('participants')
-        .select(
-          `
-          id,
-          name,
-          email,
-          total_trees,
-          created_at,
-          status (
-            id,
-            name
-          )
+    const { data } = await supabase
+      .from('participants')
+      .select(
         `
+        id,
+        name,
+        total_trees,
+        total_approved,
+        created_at,
+        images,
+        status (
+          id,
+          name
         )
-        .range(from, to);
+      `
+      )
+      .range(from, to);
 
-      setData(
-        (data || []).map((item: any) => ({
-          ...item,
-          status: Array.isArray(item.status)
-            ? item.status[0] || null
-            : item.status || null,
-        }))
-      );
-    };
+    setData(
+      (data || []).map((item: any) => ({
+        ...item,
+        status: Array.isArray(item.status)
+          ? item.status[0] || null
+          : item.status || null,
+      }))
+    );
+  };
 
+  useEffect(() => {
     fetchData();
-  }, [page, perPage, supabase]);
+  }, [page, perPage]);
 
   const totalPages = Math.ceil(total / perPage);
 
@@ -90,8 +75,8 @@ export default function ParticipantsTable() {
         <TableHeader>
           <TableRow>
             <TableHead>Nama</TableHead>
-            <TableHead>Email</TableHead>
             <TableHead>Total Trees</TableHead>
+            <TableHead>Total Approved</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Dibuat</TableHead>
             <TableHead>Aksi</TableHead>
@@ -101,9 +86,27 @@ export default function ParticipantsTable() {
           {data.map((p) => (
             <TableRow key={p.id}>
               <TableCell>{p.name}</TableCell>
-              <TableCell>{p.email}</TableCell>
-              <TableCell>{p.total_trees}</TableCell>
-              <TableCell>{p.status?.name ?? '-'}</TableCell>
+              <TableCell>{p.total_trees}</TableCell>{' '}
+              <TableCell>{p.total_approved ?? '-'}</TableCell>
+              <TableCell>
+                {p.status?.name ? (
+                  <Badge
+                    className={
+                      p.status.name === 'approved'
+                        ? 'bg-green-500 hover:bg-green-600'
+                        : p.status.name === 'pending'
+                        ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                        : p.status.name === 'rejected'
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : 'bg-gray-500 hover:bg-gray-600'
+                    }
+                  >
+                    {p.status.name}
+                  </Badge>
+                ) : (
+                  '-'
+                )}
+              </TableCell>
               <TableCell>
                 {new Date(p.created_at).toLocaleDateString('id-ID')}
               </TableCell>
@@ -146,35 +149,12 @@ export default function ParticipantsTable() {
         </div>
       </div>
 
-      {/* Modal Detail */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Detail Participant</DialogTitle>
-            <DialogDescription>Informasi lengkap participant</DialogDescription>
-          </DialogHeader>
-          {selected && (
-            <div className='space-y-2 text-sm'>
-              <p>
-                <strong>Nama:</strong> {selected.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {selected.email}
-              </p>
-              <p>
-                <strong>Total Trees:</strong> {selected.total_trees}
-              </p>
-              <p>
-                <strong>Status:</strong> {selected.status?.name ?? '-'}
-              </p>
-              <p>
-                <strong>Dibuat:</strong>{' '}
-                {new Date(selected.created_at).toLocaleString('id-ID')}
-              </p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <DetailParticipant
+        open={open}
+        selected={selected}
+        fetchData={fetchData}
+        setOpen={setOpen}
+      />
     </div>
   );
 }

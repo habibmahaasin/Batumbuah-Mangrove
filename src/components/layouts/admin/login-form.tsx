@@ -14,7 +14,16 @@ export function LoginForm({ className, formAction, ...props }: LoginFormProps) {
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className='overflow-hidden p-0'>
         <CardContent className='grid p-0 md:grid-cols-2 min-h-[80vh]'>
-          <div className='bg-muted relative hidden md:block' />
+          <div
+            className='bg-muted relative hidden md:block'
+            style={{
+              backgroundImage: "url('/mangrove.png')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          ></div>
+
           <form
             className='p-6 md:p-8 flex flex-col justify-center'
             action={formAction}
