@@ -19,7 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 interface RouteProps {
   href: string;
@@ -32,7 +32,7 @@ const routeList: RouteProps[] = [
     label: 'Home',
   },
   {
-    href: '#',
+    href: '/education',
     label: 'Edukasi',
   },
 ];
@@ -40,6 +40,7 @@ const routeList: RouteProps[] = [
 export const Navigation = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const router = useRouter();
+
   return (
     <header className='md:container mx-auto fixed md:top-6 left-0 right-0 z-40 mx-auto md:w-[90%] shadow-inner border border-secondary md:rounded-2xl flex justify-between items-center p-4 bg-card bg-opacity-80 backdrop-blur-md'>
       <Link href='/' className='font-bold text-lg flex items-center'>
@@ -81,19 +82,24 @@ export const Navigation = () => {
                   </Link>
                 </SheetTitle>
               </SheetHeader>
-
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-2 px-4'>
                 {routeList.map(({ href, label }) => (
                   <Button
                     key={href}
                     onClick={() => setIsOpen(false)}
                     asChild
-                    variant='ghost'
+                    variant='secondary'
                     className='justify-start text-base'
                   >
                     <Link href={href}>{label}</Link>
                   </Button>
                 ))}
+                <Button
+                  className='bg-[#00A44C] hover:bg-[#00823c] cursor-pointer rounded-md'
+                  onClick={() => router.push('/participants')}
+                >
+                  Ikut Berpartisipasi
+                </Button>
               </div>
             </div>
           </SheetContent>
