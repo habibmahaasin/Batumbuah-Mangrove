@@ -22,14 +22,19 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import Image from 'next/image';
+import { getStatusValue, getStatusVariant } from '@/utils/helpers';
+import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  name: z
+    .string()
+    .min(2, { message: 'Nama harus memiliki minimal 2 karakter.' }),
 });
 
 export default function ApprovalsTab() {
   const supabase = createClient();
-
+  const [loading, setLoading] = useState(false);
   const [participant, setParticipant] = useState<any>(null);
   const [open, setOpen] = useState(false);
 
@@ -39,59 +44,79 @@ export default function ApprovalsTab() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { data, error } = await supabase
-      .from('participants')
-      .select(
-        `
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from('participants')
+        .select(
+          `
           id,
           name,
           total_trees,
+          total_approved,
           updated_at,
           status 
         `
-      )
-      .eq('name', values.name)
-      .single();
+        )
+        .eq('name', values.name)
+        .single();
 
-    if (error) {
-      setParticipant({ error: error.message });
-    } else {
-      setParticipant(data);
+      if (error) {
+        setParticipant({ error: error.message });
+      } else {
+        setParticipant(data);
+      }
+
+      setOpen(true); // buka modal
+    } finally {
+      setLoading(false); // selesai loading
     }
-    setOpen(true); // open modal
   }
 
   return (
-    <div className='max-w-md mx-auto p-4'>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-          <FormField
-            control={form.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder='Enter name' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type='submit' className='w-full'>
-            Check Status
-          </Button>
-        </form>
-      </Form>
+    <>
+      <Image
+        priority
+        src='/mangrove.png'
+        alt='Mangrove'
+        width={1000}
+        height={300}
+        className='rounded-lg'
+      />
+      <div className='w-full h-fit rounded-lg mb-4 -translate-y-20 p-2'>
+        <div className='w-full h-full bg-white -mb-32 rounded-xl shadow-xl p-4'>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+              <FormField
+                control={form.control}
+                name='name'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nama</FormLabel>
+                    <FormControl>
+                      <Input placeholder='Masukkan nama' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type='submit' className='w-full' isLoading={loading}>
+                Mulai Pengecekan
+              </Button>
+            </form>
+          </Form>
+        </div>
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className='max-w-xs w-full'>
           <DialogHeader>
-            <DialogTitle>Participant Result</DialogTitle>
+            <DialogTitle>Hasil Pengecekan</DialogTitle>
             <DialogDescription>
               {participant?.error
-                ? 'An error occurred while fetching participant.'
-                : 'Here are the details of the participant:'}
+                ? 'Terjadi kesalah saat melakukan pengecekan'
+                : 'Berikut detail proses submission anda'}
             </DialogDescription>
           </DialogHeader>
 
@@ -99,22 +124,42 @@ export default function ApprovalsTab() {
           {participant?.error ? (
             <p className='text-red-500 mt-2'>{participant.error}</p>
           ) : participant ? (
-            <div className='space-y-2 mt-2'>
-              <p>
-                <strong>Name:</strong> {participant.name}
-              </p>
-              <p>
-                <strong>Total Trees:</strong> {participant.total_trees}
-              </p>
-              <p>
-                <strong>Status:</strong> {participant.status || '-'}
-              </p>
+            <div className='mt-2 divide-y divide-gray-200 rounded-md border px-4 text-sm'>
+              <div className='flex justify-between py-2'>
+                <span className='font-medium'>Nama</span>
+                <span className='truncate max-w-[200px] line-clamp-1'>
+                  {participant.name}
+                </span>
+              </div>
+              <div className='flex justify-between py-2'>
+                <span className='font-medium'>Total Diajukan</span>
+                <span className='truncate max-w-[200px] line-clamp-1'>
+                  {participant.total_trees} Pohon
+                </span>
+              </div>
+              <div className='flex justify-between py-2'>
+                <span className='font-medium'>Status</span>
+                <Badge variant={getStatusVariant(participant.status)}>
+                  {getStatusValue(participant.status || '-')}
+                </Badge>
+              </div>
+              {participant?.status === 1 && (
+                <div className='flex justify-between py-2'>
+                  <span className='font-medium'>Total Dikonfirmasi</span>
+                  <span className='truncate max-w-[200px] line-clamp-1'>
+                    {participant.total_approved} Pohon
+                  </span>
+                </div>
+              )}
             </div>
           ) : (
             <p className='mt-2'>No data yet.</p>
           )}
+          <p className='italic text-xs w-full text-end'>
+            Diperbaharui: {participant?.updated_at || '-'}
+          </p>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

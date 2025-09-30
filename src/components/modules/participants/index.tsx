@@ -11,13 +11,13 @@ export default function ParticipantsModules() {
     >
       <TabsList className='w-full shrink-0'>
         <TabsTrigger className='cursor-pointer' value='participants'>
-          Participants
+          🌱 Partisipasi
         </TabsTrigger>
         <TabsTrigger className='cursor-pointer' value='approvals'>
-          Approval
+          🔍 Pengecekan
         </TabsTrigger>
         <TabsTrigger className='cursor-pointer' value='leaderboard'>
-          Leaderboard
+          🏆 Peringkat
         </TabsTrigger>
       </TabsList>
       <TabsContent
@@ -36,7 +36,7 @@ export default function ParticipantsModules() {
         value='leaderboard'
         className='flex-1 overflow-y-auto scrollbar-hide'
       >
-        <LeaderboardTab />
+        <LeaderboardTab isPortal={false} />
       </TabsContent>
     </Tabs>
   );

@@ -14,7 +14,7 @@ export default function Home() {
       <HomeGallery />
       <div className='relative container mx-auto p-4 h-full w-[90%] pt-8 gap-8 flex flex-col gap-4 items-center'>
         <h6 className='font-bold text-[46px] text-[#006E33]'>Leaderboard</h6>
-        <LeaderboardTab />
+        <LeaderboardTab isPortal={true} />
       </div>
       <div className='relative container mx-auto p-4 h-full w-[90%] pt-8 gap-8 flex flex-col gap-4 items-center'>
         <div className='w-fit mt-4'>

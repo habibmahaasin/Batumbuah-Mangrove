@@ -1,6 +1,5 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 type Participant = {
@@ -58,28 +57,16 @@ function PodiumCard({
   className?: string;
 }) {
   return (
-    <div className='flex flex-col items-center'>
-      <Avatar className='w-16 h-16 mb-2'>
-        {participant.images ? (
-          <AvatarImage
-            src={`https://lgdimdqopholrfpibips.supabase.co/storage/v1/object/public/${participant.images}`}
-            alt={participant.name || 'User'}
-          />
-        ) : (
-          <AvatarFallback>
-            {participant.name ? participant.name.charAt(0).toUpperCase() : '?'}
-          </AvatarFallback>
-        )}
-      </Avatar>
+    <div className='flex flex-col items-center mt-4'>
       <div
-        className={`w-20 ${height} ${className} flex items-center justify-center rounded-t-md flex-col gap-2`}
+        className={`w-20 ${height} ${className} flex items-center justify-center rounded-t-xl flex-col gap-2`}
       >
         <span className='text-xl font-bold'>#{rank}</span>
         <Badge variant='outline' className='text-xs px-2 py-2 text-white'>
           🌱 {participant.total_approved ?? 0}
         </Badge>
       </div>
-      <p className='mt-1 font-medium text-sm'>
+      <p className='mt-2 font-medium text-sm truncate line-clamp-1'>
         {participant.name || 'Anonymous'}
       </p>
     </div>

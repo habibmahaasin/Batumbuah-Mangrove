@@ -18,9 +18,12 @@ import { toast } from 'sonner';
 import { parseError } from '@/utils/helpers';
 import { participantsFormSchema } from './utils';
 import { z } from 'zod';
+import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
 
 export default function ParticipantsTab() {
   const supabase = createClient();
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof participantsFormSchema>>({
     resolver: zodResolver(participantsFormSchema),
     defaultValues: {
@@ -32,6 +35,7 @@ export default function ParticipantsTab() {
   });
 
   const onSubmit = async (values: z.infer<typeof participantsFormSchema>) => {
+    setLoading(true);
     let imageUrl: string | null = null;
     if (values.images) {
       const { data: fileData, error: fileError } = await supabase.storage
@@ -66,9 +70,11 @@ export default function ParticipantsTab() {
 
     if (error) {
       toast(parseError(error));
+      setLoading(false);
     } else {
       form.reset();
       toast('Data Successfully Added');
+      setLoading(false);
     }
   };
 
@@ -82,7 +88,7 @@ export default function ParticipantsTab() {
         height={300}
         className='rounded-lg'
       />
-      <div className='w-full h-fullrounded-lg mb-4 -translate-y-32 p-2'>
+      <div className='w-full h-fit rounded-lg mb-4 -translate-y-32 p-2'>
         <div className='w-full h-full bg-white -mb-32 rounded-xl shadow-xl p-4'>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
@@ -92,9 +98,9 @@ export default function ParticipantsTab() {
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Nama</FormLabel>
                     <FormControl>
-                      <Input placeholder='John Doe' {...field} />
+                      <Input placeholder='Masukkan nama anda' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -107,7 +113,7 @@ export default function ParticipantsTab() {
                 name='images'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Upload Image</FormLabel>
+                    <FormLabel>Unggah Foto</FormLabel>
                     <FormControl>
                       <Input
                         type='file'
@@ -126,15 +132,18 @@ export default function ParticipantsTab() {
                 )}
               />
 
-              {/* Note */}
               <FormField
                 control={form.control}
                 name='note'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Note</FormLabel>
+                    <FormLabel>Catatan</FormLabel>
                     <FormControl>
-                      <Input placeholder='Add a note...' {...field} />
+                      <Textarea
+                        placeholder='Masukkan catatan'
+                        className='w-full'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,9 +156,13 @@ export default function ParticipantsTab() {
                 name='total_trees'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Total Trees</FormLabel>
+                    <FormLabel>Jumlah Pohon</FormLabel>
                     <FormControl>
-                      <Input type='number' placeholder='e.g. 100' {...field} />
+                      <Input
+                        type='number'
+                        placeholder='Masukkan jumlah pohon'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -157,7 +170,7 @@ export default function ParticipantsTab() {
               />
 
               {/* Submit */}
-              <Button type='submit' className='w-full mt-4'>
+              <Button type='submit' className='w-full mt-4' isLoading={loading}>
                 Submit
               </Button>
             </form>
