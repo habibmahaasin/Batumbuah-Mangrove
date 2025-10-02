@@ -13,25 +13,18 @@ export default function IntroHome() {
       />
 
       <div className='flex items-center flex-col gap-4 items-start'>
-        <h6 className='font-bold text-[46px] text-[#006E33]'>
-          Lorem ipsum dolor
-        </h6>
+        <h6 className='font-bold text-[46px] text-[#006E33]'>BATUMBUAH</h6>
         <p className='text-[#006E33] text-justify'>
-          sit amet, consectetur adipiscing elit. Phasellus ut libero sed nulla
-          elementum finibus. Morbi id turpis massa. Ut ex metus, vehicula vel
-          elit vel, malesuada elementum nisl. Nulla maximus ipsum eu mi sagittis
-          vehicula. Cras molestie mattis ipsum, non viverra orci pretium at.
-          Aliquam tristique ante ligula, ut fringilla enim rhoncus at. In quis
-          urna et ligula vehicula feugiat. Donec placerat, leo sed elementum
-          rutrum, arcu metus maximus tellus, a hendrerit mauris justo eget
-          metus. Nullam sed nunc sit amet lorem hendrerit feugiat. Quisque ac
-          dignissim nisi. Nullam et eros id lacus vulputate ornare vitae a leo.
-          Morbi accumsan lacus at nunc viverra, id congue augue tempus. In quis
-          urna et ligula vehicula feugiat. Donec placerat, leo sed elementum
-          rutrum, arcu metus maximus tellus, a hendrerit mauris justo eget
-          metus. Nullam sed nunc sit amet lorem hendrerit feugiat. Quisque ac
-          dignissim nisi. Nullam et eros id lacus vulputate ornare vitae a leo.
-          Morbi accumsan lacus at nunc viverra, id congue augue tempus.
+          Program BATUMBUAH 2025 hadir untuk mengatasi abrasi pesisir Sumatera
+          Barat sekaligus mendukung target GoZero Telkom dan program dana hijau
+          nasional. Melalui kolaborasi multi-stakeholder, digitalisasi, dan
+          gamifikasi, program ini menargetkan survival rate mangrove hingga 90%,
+          meningkatkan penghasilan masyarakat sebesar Rp800.000–1.000.000 per
+          keluarga, serta menyerap sekitar 1.845 kg CO₂ per tahun. Dengan
+          keterlibatan karyawan, masyarakat, pemerintah, dan pelaku usaha lokal,
+          BATUMBUAH 2025 berkomitmen menciptakan ekosistem pesisir yang lestari,
+          ekonomi yang berdaya, dan memberikan kontribusi nyata bagi masa depan
+          hijau Indonesia.
         </p>
       </div>
     </div>

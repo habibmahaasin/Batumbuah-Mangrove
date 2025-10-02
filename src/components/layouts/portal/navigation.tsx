@@ -35,6 +35,10 @@ const routeList: RouteProps[] = [
     href: '/education',
     label: 'Edukasi',
   },
+  {
+    href: '/participants',
+    label: 'Ikut Berpartisipasi',
+  },
 ];
 
 export const Navigation = () => {
@@ -84,22 +88,17 @@ export const Navigation = () => {
               </SheetHeader>
               <div className='flex flex-col gap-2 px-4'>
                 {routeList.map(({ href, label }) => (
-                  <Button
-                    key={href}
-                    onClick={() => setIsOpen(false)}
-                    asChild
-                    variant='secondary'
-                    className='justify-start text-base'
-                  >
-                    <Link href={href}>{label}</Link>
-                  </Button>
+                  <Link key={href} href={href} onClick={() => setIsOpen(false)}>
+                    <Button
+                      variant={
+                        href === '/participants' ? 'default' : 'secondary'
+                      }
+                      className='justify-start text-base w-full cursor-pointer'
+                    >
+                      {label}
+                    </Button>
+                  </Link>
                 ))}
-                <Button
-                  className='bg-[#00A44C] hover:bg-[#00823c] cursor-pointer rounded-md'
-                  onClick={() => router.push('/participants')}
-                >
-                  Ikut Berpartisipasi
-                </Button>
               </div>
             </div>
           </SheetContent>
@@ -112,18 +111,18 @@ export const Navigation = () => {
           <NavigationMenuItem className='flex flex-row gap-4'>
             {routeList.map(({ href, label }) => (
               <NavigationMenuLink key={href} asChild>
-                <Link href={href} className='text-base px-2'>
+                <Link
+                  href={href}
+                  className={`text-base px-2 ${
+                    href === '/participants' &&
+                    'bg-[#00A44C] hover:!bg-[#00823c] cursor-pointer px-4 !text-white rounded-lg'
+                  }`}
+                >
                   {label}
                 </Link>
               </NavigationMenuLink>
             ))}
           </NavigationMenuItem>{' '}
-          <Button
-            className='bg-[#00A44C] hover:bg-[#00823c] cursor-pointer rounded-lg ml-4'
-            onClick={() => router.push('/participants')}
-          >
-            Ikut Berpartisipasi
-          </Button>
         </NavigationMenuList>
       </NavigationMenu>
     </header>
