@@ -53,7 +53,7 @@ export default function DetailParticipant({
   const [loading, setLoading] = useState(false);
   const [totalApproved, setTotalApproved] = useState(0);
 
-  const handleApprove = async () => {
+  const handleApprove = async (status: Number) => {
     if (!selected) return;
     setLoading(true);
 
@@ -61,7 +61,7 @@ export default function DetailParticipant({
       .from('participants')
       .update({
         total_approved: totalApproved,
-        status: 1,
+        status: status,
       })
       .eq('id', String(selected.id));
 
@@ -108,6 +108,8 @@ export default function DetailParticipant({
                   id='total_approved'
                   name='total_approved'
                   type='number'
+                  min={0}
+                  max={selected?.total_trees}
                   placeholder='ex: 1'
                   required
                   onChange={(e) => {
@@ -116,13 +118,27 @@ export default function DetailParticipant({
                   value={totalApproved}
                 />
               </div>
-              <Button
-                onClick={handleApprove}
-                disabled={loading}
-                className='w-full'
-              >
-                Approve
-              </Button>
+              <div className='flex w-full items-center gap-4'>
+                <Button
+                  onClick={() => {
+                    handleApprove(3);
+                  }}
+                  disabled={loading}
+                  variant={'destructive'}
+                  className='flex-1'
+                >
+                  Reject
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleApprove(1);
+                  }}
+                  disabled={loading}
+                  className='flex-1'
+                >
+                  Approve
+                </Button>
+              </div>
             </div>
           </div>
         )}

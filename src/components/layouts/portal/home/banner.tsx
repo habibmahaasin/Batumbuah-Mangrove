@@ -14,9 +14,9 @@ export default function HomeBanner() {
 
           <div className='h-full w-full flex flex-col gap-24'>
             <h4 className='text-white md:text-xl'>
-              Melalui program ini, kita telah menanam [X pohon mangrove] yang
+              Melalui program ini, kita telah menanam 17.000 pohon mangrove yang
               <br />
-              setara dengan menyerap [Y kilogram karbon] dari atmosfer.
+              setara dengan menyerap 5.950 tCO2e dari atmosfer.
             </h4>
             <h4 className='text-white md:text-xl'>
               Kami sudah memulai langkah kecil untuk bumi. <br /> Sekarang

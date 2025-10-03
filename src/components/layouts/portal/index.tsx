@@ -2,13 +2,14 @@ import { ReactNode } from 'react';
 import { Navigation } from './navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import FooterComponent from './footer';
 
 export default function PortalLayout({ children }: { children: ReactNode }) {
   return (
     <div className='overflow-x-hidden relative min-h-screen'>
       <Navigation />
       {children}
-
+      <FooterComponent />
       <Link
         href='https://chat.openai.com/'
         target='_blank'

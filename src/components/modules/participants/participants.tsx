@@ -160,6 +160,7 @@ export default function ParticipantsTab() {
                     <FormControl>
                       <Input
                         type='number'
+                        min={0}
                         placeholder='Masukkan jumlah pohon'
                         {...field}
                       />

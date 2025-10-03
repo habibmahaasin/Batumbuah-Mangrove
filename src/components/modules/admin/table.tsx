@@ -14,6 +14,18 @@ import { Button } from '@/components/ui/button';
 import DetailParticipant from './detail';
 import { Participant } from './type';
 import { Badge } from '@/components/ui/badge';
+import { Trash } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
 
 export default function ParticipantsTable() {
   const supabase = createClient();
@@ -24,6 +36,7 @@ export default function ParticipantsTable() {
 
   const [selected, setSelected] = useState<Participant | null>(null);
   const [open, setOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const fetchData = async () => {
     const { count } = await supabase
@@ -51,6 +64,7 @@ export default function ParticipantsTable() {
         )
       `
       )
+      .order('created_at', { ascending: false })
       .range(from, to);
 
     setData(
@@ -68,6 +82,25 @@ export default function ParticipantsTable() {
   }, [page, perPage]);
 
   const totalPages = Math.ceil(total / perPage);
+
+  const handleDelete = async () => {
+    if (!selected) return;
+
+    const { error } = await supabase
+      .from('participants')
+      .delete()
+      .eq('id', selected.id)
+      .select();
+
+    if (error) {
+      toast.error(`Delete failed: ${error.message}`);
+      return;
+    }
+
+    setDeleteOpen(false);
+    setSelected(null);
+    fetchData();
+  };
 
   return (
     <div className='space-y-4'>
@@ -110,7 +143,7 @@ export default function ParticipantsTable() {
               <TableCell>
                 {new Date(p.created_at).toLocaleDateString('id-ID')}
               </TableCell>
-              <TableCell>
+              <TableCell className='flex gap-2'>
                 <Button
                   size='sm'
                   variant='outline'
@@ -120,6 +153,16 @@ export default function ParticipantsTable() {
                   }}
                 >
                   Detail
+                </Button>{' '}
+                <Button
+                  size='sm'
+                  variant='destructive'
+                  onClick={() => {
+                    setSelected(p);
+                    setDeleteOpen(true);
+                  }}
+                >
+                  <Trash className='w-4 h-4' />
                 </Button>
               </TableCell>
             </TableRow>
@@ -155,6 +198,31 @@ export default function ParticipantsTable() {
         fetchData={fetchData}
         setOpen={setOpen}
       />
+
+      {/* Delete Confirmation Modal */}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Peserta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus{' '}
+              <span className='font-semibold'>{selected?.name}</span>? Tindakan
+              ini tidak bisa dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteOpen(false)}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className='bg-red-500 hover:bg-red-600'
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
