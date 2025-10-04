@@ -22,7 +22,27 @@ export default function LeaderboardTab({ isPortal }: { isPortal: boolean }) {
         .order('total_approved', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: true })
         .limit(10);
-      setData(data || []);
+
+      let result = data || [];
+
+      if (result.length < 10) {
+        const missing = 10 - result.length;
+        const dummyData = Array.from({ length: missing }, (_, i) => ({
+          id: `dummy-${i + 1}`,
+          name: 'Kosong',
+          images: '',
+          note: '',
+          total_trees: 0,
+          total_approved: 0,
+          status: 1,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }));
+
+        result = [...result, ...dummyData];
+      }
+
+      setData(result);
       setError(error);
 
       const { data: allData, error: allError } = await supabase
@@ -63,7 +83,7 @@ export default function LeaderboardTab({ isPortal }: { isPortal: boolean }) {
             </div>
           </div>
           <p className='font-bold text-center'>
-            Perkiraan Emisi Karbon: {totalApproved * 0.35} tCO2e
+            Perkiraan Emisi Karbon: {(totalApproved * 0.35).toFixed(2)} tCO2e
           </p>
         </div>
       ) : (
@@ -82,7 +102,13 @@ export default function LeaderboardTab({ isPortal }: { isPortal: boolean }) {
                 <span className='text-lg font-bold w-6 text-center'>
                   {index + 4}
                 </span>
-                <p className='font-medium'>{participant.name || 'Anonymous'}</p>
+                <p
+                  className={`font-medium ${
+                    participant.name === 'Kosong' && 'text-red-500'
+                  }`}
+                >
+                  {participant.name || 'Anonymous'}
+                </p>
               </div>
               <Badge variant='secondary' className='text-sm px-3 py-1'>
                 🌱 Approved: {participant.total_approved ?? 0}

@@ -14,7 +14,8 @@ export default function HomeBanner() {
 
           <div className='h-full w-full flex flex-col gap-24'>
             <h4 className='text-white md:text-xl'>
-              Melalui program ini, kita telah menanam 17.000 pohon mangrove yang
+              Melalui program ini, Telkom telah menanam 17.000 pohon mangrove
+              yang
               <br />
               setara dengan menyerap 5.950 tCO2e dari atmosfer.
             </h4>

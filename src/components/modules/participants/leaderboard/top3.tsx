@@ -66,7 +66,11 @@ function PodiumCard({
           🌱 {participant.total_approved ?? 0}
         </Badge>
       </div>
-      <p className='mt-2 font-medium text-sm truncate line-clamp-1'>
+      <p
+        className={`mt-2 font-medium text-sm truncate line-clamp-1 ${
+          participant.name === 'Kosong' && 'text-red-500'
+        }`}
+      >
         {participant.name || 'Anonymous'}
       </p>
     </div>

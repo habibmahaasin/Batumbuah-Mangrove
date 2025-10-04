@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 import { parseError } from '@/utils/helpers';
+import imageCompression from 'browser-image-compression';
 import { participantsFormSchema } from './utils';
 import { z } from 'zod';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,43 +38,48 @@ export default function ParticipantsTab() {
   const onSubmit = async (values: z.infer<typeof participantsFormSchema>) => {
     setLoading(true);
     let imageUrl: string | null = null;
-    if (values.images) {
-      const { data: fileData, error: fileError } = await supabase.storage
-        .from('batumbuah_mangrove')
-        .upload(
-          `participants/${Date.now()}_${values.images.name}`,
-          values.images,
-          {
+
+    try {
+      if (values.images) {
+        const options = {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1280,
+          useWebWorker: true,
+        };
+
+        const compressedFile = await imageCompression(values.images, options);
+
+        const fileName = `participants/${Date.now()}_${compressedFile.name}`;
+        const { data: fileData, error: fileError } = await supabase.storage
+          .from('batumbuah_mangrove')
+          .upload(fileName, compressedFile, {
             cacheControl: '3600',
             upsert: false,
-          }
-        );
+          });
 
-      if (fileError) {
-        console.error('File upload error:', fileError);
-        return;
+        if (fileError) throw fileError;
+        imageUrl = fileData?.path ?? null;
       }
-      imageUrl = fileData?.path ? fileData.path : null;
-    }
 
-    const { data, error } = await supabase
-      .from('participants')
-      .insert([
-        {
-          name: values.name,
-          images: imageUrl,
-          note: values.note,
-          total_trees: values.total_trees,
-        },
-      ])
-      .select();
+      const { data, error } = await supabase
+        .from('participants')
+        .insert([
+          {
+            name: values.name,
+            images: imageUrl,
+            note: values.note,
+            total_trees: values.total_trees,
+          },
+        ])
+        .select();
 
-    if (error) {
-      toast(parseError(error));
-      setLoading(false);
-    } else {
+      if (error) throw error;
+
       form.reset();
       toast('Data Successfully Added');
+    } catch (err: any) {
+      toast(parseError(err));
+    } finally {
       setLoading(false);
     }
   };
@@ -120,10 +126,22 @@ export default function ParticipantsTab() {
                         accept='image/*'
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (file) {
-                            // save the file name (or convert to base64 / upload directly)
-                            field.onChange(file);
+                          if (!file) return;
+
+                          if (!file.type.startsWith('image/')) {
+                            toast.error('Only image files are allowed!');
+                            e.target.value = '';
+                            return;
                           }
+
+                          const maxSize = 5 * 1024 * 1024;
+                          if (file.size > maxSize) {
+                            toast.error('File size must be under 5 MB!');
+                            e.target.value = '';
+                            return;
+                          }
+
+                          field.onChange(file);
                         }}
                       />
                     </FormControl>

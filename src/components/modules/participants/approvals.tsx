@@ -122,7 +122,9 @@ export default function ApprovalsTab() {
 
           {/* Structured content goes outside of DialogDescription */}
           {participant?.error ? (
-            <p className='text-red-500 mt-2'>{participant.error}</p>
+            <p className='text-red-500 mt-2'>
+              {'Terjadi Kesalahan!, Data Tidak Ditemukan'}
+            </p>
           ) : participant ? (
             <div className='mt-2 divide-y divide-gray-200 rounded-md border px-4 text-sm'>
               <div className='flex justify-between py-2'>
